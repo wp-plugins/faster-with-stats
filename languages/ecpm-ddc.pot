@@ -1,0 +1,168 @@
+# Copyright (C) 2015 EasyCPMods Faster with Stats
+# This file is distributed under the same license as the EasyCPMods Faster with Stats.
+msgid ""
+msgstr ""
+"Project-Id-Version: EasyCPMods Faster with Stats 1.0.0\n"
+"Report-Msgid-Bugs-To: http://www.easycpmods.com\n"
+"POT-Creation-Date: 2015-05-14 10:14:01+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2015-05-15 11:11+0100\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: en\n"
+"X-Generator: Poedit 1.7.5\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+
+#: ecpm-ddc.php:364
+msgid "Records moved: %s"
+msgstr ""
+
+#: ecpm-ddc.php:376
+msgid "Speed"
+msgstr ""
+
+#: ecpm-ddc.php:377
+msgid "Hits"
+msgstr ""
+
+#: ecpm-ddc.php:378
+msgid "Posts"
+msgstr ""
+
+#: ecpm-ddc.php:379
+msgid "Users"
+msgstr ""
+
+#: ecpm-ddc.php:380
+msgid "Options"
+msgstr ""
+
+#: ddc-options.php:2
+msgid "Move records older then (in days):"
+msgstr ""
+
+#: ddc-options.php:5
+msgid "Record threshold:"
+msgstr ""
+
+#: ddc-options.php:8
+msgid "Run this script:"
+msgstr ""
+
+#: ddc-options.php:11
+msgid "Manually"
+msgstr ""
+
+#: ddc-options.php:12
+msgid "Auto"
+msgstr ""
+
+#: ddc-options.php:20
+msgid "Plugin deactivation"
+msgstr ""
+
+#: ddc-options.php:23
+msgid "Put data back"
+msgstr ""
+
+#: ddc-options.php:25
+msgid "Remove all plugin settings and tables"
+msgstr ""
+
+#: ddc-options.php:27
+msgid "Save settings"
+msgstr ""
+
+#: ddc-pro.php:556
+msgid "Total daily ad views"
+msgstr ""
+
+#: ddc-pro.php:561
+msgid "Number of different ads seen"
+msgstr ""
+
+#: ddc-users.php:4
+msgid "Users and posts"
+msgstr ""
+
+#: ddc-users.php:13
+msgid "Top users"
+msgstr ""
+
+#: ddc-posts.php:10
+msgid "No. of Ads"
+msgstr ""
+
+#: ddc-posts.php:13
+msgid "No. of Coupons"
+msgstr ""
+
+#: ddc-posts.php:16
+msgid "No. of Jobs"
+msgstr ""
+
+#: ddc-pro.php:385
+msgid "Maximum no. of posts per user"
+msgstr ""
+
+#: ddc-pro.php:390
+msgid "No. of registered users"
+msgstr ""
+
+#: ddc-pro.php:471
+msgid "User"
+msgstr ""
+
+#: ddc-pro.php:472
+msgid "Total"
+msgstr ""
+
+#: ddc-pro.php:473
+msgid "Published"
+msgstr ""
+
+#: ddc-pro.php:474
+msgid "Pending"
+msgstr ""
+
+#: ddc-pro.php:475
+msgid "Draft"
+msgstr ""
+
+#: ddc-speed.php:3
+msgid "Time gained with this plugin"
+msgstr ""
+
+#: ddc-hits.php:10
+msgid "Hits on posts"
+msgstr ""
+
+#: ddc-speed.php:19
+msgid "Maximum time for getting daily counts: %s"
+msgstr ""
+
+#: ddc-speed.php:20
+msgid "Minimum time for getting daily counts: %s"
+msgstr ""
+
+#: ddc-speed.php:21
+msgid "Time gained for every visitor (in seconds): %s"
+msgstr ""
+
+#: ddc-speed.php:22
+msgid "Average time gained in one day (%s hits): %s"
+msgstr ""
+
+#: ddc-speed.php:59
+msgid "Time gained"
+msgstr "Pridobljen čas"
+
+#: ddc-speed.php:25
+msgid "Records currently in the table: %s"
+msgstr ""
+
+#: ecpm-ddc.php:395
+msgid "Optimize table now"
+msgstr ""

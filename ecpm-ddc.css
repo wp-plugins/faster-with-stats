@@ -1,0 +1,25 @@
+#ecpm_top_users {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    width: 420px;
+    border-collapse: collapse;
+}
+
+#ecpm_top_users td, #ecpm_top_users th {
+    font-size: 1em;
+    border: 1px solid #CCCCCC;
+    padding: 3px 7px 2px 7px;
+}
+
+#ecpm_top_users th {
+    font-size: 1.1em;
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 4px;
+    background-color: #BD9B33;
+    color: #ffffff;
+}
+
+#ecpm_top_users tr.alt td {
+    color: #000000;
+    background-color: #EDC240;
+}

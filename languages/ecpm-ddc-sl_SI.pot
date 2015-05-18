@@ -1,0 +1,168 @@
+# Copyright (C) 2015 EasyCPMods Faster with Stats
+# This file is distributed under the same license as the EasyCPMods Faster with Stats.
+msgid ""
+msgstr ""
+"Project-Id-Version: EasyCPMods Faster with Stats 1.0.0\n"
+"Report-Msgid-Bugs-To: http://www.easycpmods.com\n"
+"POT-Creation-Date: 2015-05-14 08:51:07+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2015-05-15 11:11+0100\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: sl_SI\n"
+"X-Generator: Poedit 1.7.5\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+
+#: ecpm-ddc.php:364
+msgid "Records moved: %s"
+msgstr "Premaknjenih zapisov: %s"
+
+#: ecpm-ddc.php:376
+msgid "Speed"
+msgstr "Hitrost"
+
+#: ecpm-ddc.php:377
+msgid "Hits"
+msgstr "Zadetki"
+
+#: ecpm-ddc.php:378
+msgid "Posts"
+msgstr "Objave"
+
+#: ecpm-ddc.php:379
+msgid "Users"
+msgstr "Uporabniki"
+
+#: ecpm-ddc.php:380
+msgid "Options"
+msgstr "Nastavitve"
+
+#: ddc-options.php:2
+msgid "Move records older then (in days):"
+msgstr "Premakni zapise starejše od (dni):"
+
+#: ddc-options.php:5
+msgid "Record threshold:"
+msgstr "Meja brisanja:"
+
+#: ddc-options.php:8
+msgid "Run this script:"
+msgstr "Poganjaj to skripto:"
+
+#: ddc-options.php:11
+msgid "Manually"
+msgstr "Ročno"
+
+#: ddc-options.php:12
+msgid "Auto"
+msgstr "Samodejno"
+
+#: ddc-options.php:20
+msgid "Plugin deactivation"
+msgstr "Izklop dodatka"
+
+#: ddc-options.php:23
+msgid "Put data back"
+msgstr "Premakni nazaj zapise o zadetkih"
+
+#: ddc-options.php:25
+msgid "Remove all plugin settings and tables"
+msgstr "Odstrani vse vtičnikove nastavitve in tabele"
+
+#: ddc-options.php:27
+msgid "Save settings"
+msgstr "Shrani nastavitve"
+
+#: ddc-pro.php:556
+msgid "Total daily ad views"
+msgstr "Skupaj prikazanih oglasov"
+
+#: ddc-pro.php:561
+msgid "Number of different ads seen"
+msgstr "Število videnih oglasov"
+
+#: ddc-users.php:4
+msgid "Users and posts"
+msgstr "Uporabniki in objave"
+
+#: ddc-users.php:13
+msgid "Top users"
+msgstr "Naj uporabniki"
+
+#: ddc-posts.php:10
+msgid "No. of Ads"
+msgstr "Število oglasov"
+
+#: ddc-posts.php:13
+msgid "No. of Coupons"
+msgstr "Število kuponov"
+
+#: ddc-posts.php:16
+msgid "No. of Jobs"
+msgstr "Število oglasov"
+
+#: ddc-pro.php:385
+msgid "Maximum no. of posts per user"
+msgstr "Največje število objav na uporabnika"
+
+#: ddc-pro.php:390
+msgid "No. of registered users"
+msgstr "Število registriranih uporabnikov"
+
+#: ddc-pro.php:471
+msgid "User"
+msgstr "Uporabnik"
+
+#: ddc-pro.php:472
+msgid "Total"
+msgstr "Skupaj"
+
+#: ddc-pro.php:473
+msgid "Published"
+msgstr "Objavljenih"
+
+#: ddc-pro.php:474
+msgid "Pending"
+msgstr "Na čakanju"
+
+#: ddc-pro.php:475
+msgid "Draft"
+msgstr "Neobjavljeni"
+
+#: ddc-speed.php:3
+msgid "Time gained with this plugin"
+msgstr "Pridobljen čas s tem vtičnikom"
+
+#: ddc-hits.php:10
+msgid "Hits on posts"
+msgstr "Zadetki"
+
+#: ddc-speed.php:19
+msgid "Maximum time for getting daily counts: %s"
+msgstr "Najdaljši čas potreben za branje dnevnih števcev: %s"
+
+#: ddc-speed.php:20
+msgid "Minimum time for getting daily counts: %s"
+msgstr "Najkrajši čas potreben za branje dnevnih števcev: %s"
+
+#: ddc-speed.php:21
+msgid "Time gained for every visitor (in seconds): %s"
+msgstr "Prihranjen čas za vsakega obiskovalca: %s"
+
+#: ddc-speed.php:22
+msgid "Average time gained in one day (%s hits): %s"
+msgstr "Povprečen prihranjen čas v enem dnevu (%s zadetkov): %s"
+
+#: ddc-speed.php:59
+msgid "Time gained"
+msgstr "Pridobljen čas"
+
+#: ddc-speed.php:25
+msgid "Records currently in the table: %s"
+msgstr "Zapisov trenutno v tabeli: %s"
+
+#: ecpm-ddc.php:395
+msgid "Optimize table now"
+msgstr "Optimiziraj tabelo"
