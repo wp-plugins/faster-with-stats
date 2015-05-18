@@ -4,7 +4,7 @@ Donate link: http://www.easycpmods.com
 Tags: speed, load, faster, stats, jobroller, clipper, classipress, slow, lightweight
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,11 +35,11 @@ Waiting for first question.
 
 == Screenshots ==
 
-1. faster-with-stats-speed.png
-2. faster-with-stats-hits.png
-3. faster-with-stats-posts.png
-4. faster-with-stats-users.png
-5. faster-with-stats-options.png
+1. Main functionality of the plugin - gained speed
+2. Number of hits you are getting on your posts
+3. Statuses of posts
+4. Top users
+5. Options dialog
 
 == Changelog ==
 
