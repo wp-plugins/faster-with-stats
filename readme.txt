@@ -4,7 +4,7 @@ Donate link: http://www.easycpmods.com
 Tags: speed, load, faster, stats, jobroller, clipper, classipress, slow, lightweight
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ Waiting for first question.
 5. Options dialog
 
 == Changelog ==
+
+= 1.0.3 =
+* Added links to user's ads and user profile on the top user table
 
 = 1.0.0 =
 * Initial version

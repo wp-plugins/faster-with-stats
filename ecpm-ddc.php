@@ -4,7 +4,7 @@ Plugin Name: Faster with Stats
 Plugin URI: http://www.easycpmods.com
 Description: Faster with Stats is a lightweight plugin that will speed up your AppThemes installation by moving daily statistics data to a plugin table. Why? Because a large table with daily counters will make your site very slow. It works with <strong>Classipress, Jobroller</strong> and <strong>Clipper</strong>.
 Author: Easy CP Mods
-Version: 1.0.2
+Version: 1.0.3
 Author URI: http://www.easycpmods.com
 */
 
@@ -407,6 +407,8 @@ function buy_pro_screenshot() {
 <p align="center">
   <a href="http://www.easycpmods.com/plugin-faster-with-stats/" target="_blank"><img src="<?php echo plugins_url( 'images/pay-pal-paynow-button.png', __FILE__ );?>" border="0"></a>
 </p>
+<p align="center"><i>If you have already purchased a <a href="http://www.easycpmods.com/plugin-faster-with-stats/" target="_blank"><strong>PRO version</strong></a>, then please <a href="http://www.easycpmods.com/">visit your account</a> and download a newer version.</i><p>
+
 <?php 
 }
 ?>
