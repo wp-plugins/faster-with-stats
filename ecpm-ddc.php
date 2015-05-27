@@ -4,12 +4,13 @@ Plugin Name: Faster with Stats
 Plugin URI: http://www.easycpmods.com
 Description: Faster with Stats is a lightweight plugin that will speed up your AppThemes installation by moving daily statistics data to a plugin table. Why? Because a large table with daily counters will make your site very slow. It works with <strong>Classipress, Jobroller</strong> and <strong>Clipper</strong>.
 Author: Easy CP Mods
-Version: 1.0.3
+Version: 1.0.4
 Author URI: http://www.easycpmods.com
 */
 
 define('ECPM_DDC', 'ecpm-ddc');
 define('DDC_NAME', '/faster-with-stats');
+define('DDC_DB_VER', '1.0.4');
 
 register_activation_hook( __FILE__, 'ecpm_ddc_activate');
 register_deactivation_hook( __FILE__, 'ecpm_ddc_deactivate');
@@ -40,9 +41,14 @@ function ecpm_ddc_requires_version() {
 		
     if( is_plugin_active($plugin) ) {
 			deactivate_plugins( $plugin );
-			wp_die( "<strong>".$plugin_data['Name']."</strong> requires a AppThemes theme to be installed. Your Wordpress installation does not appear to have that installed. The plugin has been deactivated!<br />If this is a mistake, please contact plugin developer!<br /><br />Back to the WordPress <a href='".get_admin_url(null, 'plugins.php')."'>Plugins page</a>." );
+			wp_die( "<strong>".$plugin_data['Name']."</strong> requires a AppThemes theme to be installed. Your WordPress installation does not appear to have that installed. The plugin has been deactivated!<br />If this is a mistake, please contact plugin developer!<br /><br />Back to the WordPress <a href='".get_admin_url(null, 'plugins.php')."'>Plugins page</a>." );
 		}
 	}
+  
+  $ddc_db_ver = get_option('ecpm_ddc_db_ver');
+  if ( DDC_DB_VER != $ddc_db_ver ) {
+    ddc_table_create();
+  }
 }
 
 function ecpm_ddc_activate() {
@@ -80,10 +86,12 @@ function ecpm_ddc_deactivate() {
      delete_option( 'ecpm_ddc_max_time' );
      delete_option( 'ecpm_ddc_min_time' );
      delete_option( 'ecpm_ddc_avg_hits' );
+     delete_option( 'ecpm_ddc_db_ver' );
      
      global $table_prefix, $wpdb;
      $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."ecpm_ddc");
      $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."ecpm_ddc_speed");
+     $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."ecpm_ddc_dead_users");
   }  
 }
 
@@ -148,34 +156,40 @@ function time_daily_table($wpdb) {
   $today_date = date( 'Y-m-d', current_time( 'timestamp' ) );
 
 // time max value
-  $start_time = microtime();
+  $start_time = microtime(true);
   
   foreach ( $ad_ids as $ad_id ) {
     $result = $wpdb->get_var( "SELECT postcount FROM ".$wpdb->prefix."ecpm_ddc WHERE postnum = $ad_id->ID and time = $today_date" );
   } 
-  $exec_time = microtime() - $start_time;
-  
-  if ($exec_time > $ecpm_ddc_max_time) 
-    update_option( 'ecpm_ddc_max_time', $exec_time );
-  
+  $stop_time = microtime(true);
+  if ( $stop_time > $start_time ) {
+    $exec_max_time = $stop_time - $start_time;
+    //if ($exec_max_time > $ecpm_ddc_max_time) 
+      update_option( 'ecpm_ddc_max_time', $exec_max_time );
+  }
   
 // time min value
-  $start_time = microtime();
+  $start_time = microtime(true);
   
   foreach ( $ad_ids as $ad_id ) {
     $result = $wpdb->get_var( "SELECT postcount FROM $app_daily_table WHERE postnum = $ad_id->ID and time < $today_date" );
   } 
-  $exec_time = microtime() - $start_time;
+  $stop_time = microtime(true);
   
-  if ($exec_time < $ecpm_ddc_min_time || !$ecpm_ddc_min_time)
-    update_option( 'ecpm_ddc_min_time', $exec_time );
+  if ( $stop_time > $start_time ) {
+    $exec_min_time = $stop_time - $start_time;
+    if ( $exec_min_time > $exec_max_time ) 
+      $exec_min_time = 0;
+  
+    //if ($exec_min_time < $ecpm_ddc_min_time || !$ecpm_ddc_min_time || $ecpm_ddc_min_time <= 0 )
+      update_option( 'ecpm_ddc_min_time', $exec_min_time );
+  }
 
 // average hits
-  //$time_to = appthemes_mysql_date( current_time( 'mysql' ) );
-  //$time_from = appthemes_mysql_date( current_time( 'mysql' ), -90 );
   $sql = "SELECT AVG(total) AS tot FROM ( SELECT SUM(postcount) as total, time FROM ".$wpdb->prefix."ecpm_ddc WHERE time >= DATE_ADD(CURDATE(), INTERVAL -90 DAY) and time < CURDATE() GROUP BY DATE(time) ) sumtotal";
   $result = $wpdb->get_var( $sql );
   update_option( 'ecpm_ddc_avg_hits', round($result,0) );
+  
 }
 
 function count_daily($wpdb) {
@@ -198,19 +212,32 @@ function move_daily($wpdb) {
   time_daily_table($wpdb);
   
   // Save time gained
-  $time_gained = get_time_gained();
-  $wpdb->query("INSERT IGNORE INTO ".$wpdb->prefix."ecpm_ddc_speed (day, time_gained) VALUES(CURDATE(), '$time_gained')");
+  $daily_time_diff = ( get_option('ecpm_ddc_max_time') - get_option('ecpm_ddc_min_time') ) * get_option('ecpm_ddc_avg_hits');
+  $daily_time_diff = strftime('%T', mktime(0, 0, intval($daily_time_diff)));
+  $wpdb->query("INSERT IGNORE INTO ".$wpdb->prefix."ecpm_ddc_speed (day, time_gained) VALUES(CURDATE(), '$daily_time_diff')");
   
+  // Save dead users
+  if ( ddc_is_pro() ) {
+    $dead_users = count_dead_users($wpdb);
+    $wpdb->query("INSERT IGNORE INTO ".$wpdb->prefix."ecpm_ddc_dead_users (day, dead_users) VALUES(CURDATE(), '$dead_users')");
+  }
+
   return $result;
 }
 
 function get_time_gained(){
-  $time_diff = get_option('ecpm_ddc_max_time') - get_option('ecpm_ddc_min_time');
-  $ecpm_ddc_avg_hits = get_option('ecpm_ddc_avg_hits');
-  $ecpm_ddc_avg_time_saved = $ecpm_ddc_avg_hits * $time_diff;
-  $sec = intval($ecpm_ddc_avg_time_saved);
+  global $wpdb;
+  
+	$ecpm_ddc_avg_hits = get_option('ecpm_ddc_avg_hits');
+  
+  $sql = "SELECT AVG(TIME_TO_SEC(time_gained)) FROM ".$wpdb->prefix."ecpm_ddc_speed WHERE day > DATE_ADD(CURDATE(), INTERVAL -90 DAY)";
+	$avg_time_diff = $wpdb->get_var( $sql );
+  
+  $ecpm_ddc_avg_time_user = $avg_time_diff / $ecpm_ddc_avg_hits;
 
-  return strftime('%T', mktime(0, 0, $sec));
+  $return_time[0] = $ecpm_ddc_avg_time_user;
+  $return_time[1] = strftime('%T', mktime(0, 0, intval($avg_time_diff)));
+  return $return_time;
 }
 
 function move_data_back($wpdb) {
@@ -248,7 +275,18 @@ function ddc_table_create () {
           UNIQUE KEY (day)
         ) $charset_collate;";
   
-  dbDelta( $sql );  
+  dbDelta( $sql );
+  
+// dead users
+  $table_name = $wpdb->prefix . "ecpm_ddc_dead_users";
+  $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+          day date NOT NULL DEFAULT '0000-00-00',
+          dead_users int(11) NOT NULL DEFAULT '0',
+          UNIQUE KEY (day)
+        ) $charset_collate;";
+  
+  dbDelta( $sql );
+  update_option( 'ecpm_ddc_db_ver', DDC_DB_VER );      
   
 }
 

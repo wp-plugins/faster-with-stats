@@ -4,7 +4,7 @@ Donate link: http://www.easycpmods.com
 Tags: speed, load, faster, stats, jobroller, clipper, classipress, slow, lightweight
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,11 +22,11 @@ Why is your site getting slower and slower? This table stores hit counts for eve
 It doesn't sound a lot, but here is what happens when a user visits your web page:<br>
 Default theme in Classipress uses 3 tabs on front page and on every tab there are 10 ads by default. So this means that there will be 30 selects only on this table for every customer and this is a big impact on SQL server.
 
-Classipress, Clipper or Jobroller child theme is required to be installed on your Wordpress for this plugin to work.
+Classipress, Clipper or Jobroller child theme is required to be installed on your WordPress for this plugin to work.
 
 == Installation ==
 
-1. Extract the folder into your wordpress plugins directory
+1. Extract the folder into your WordPress plugins directory
 2. Enable the plugin
 3. Config the plugin under Settings->Faster with Stats
  
@@ -42,6 +42,9 @@ Waiting for first question.
 5. Options dialog
 
 == Changelog ==
+
+= 1.0.4 =
+* Added new statistic about dead users (users without posts)
 
 = 1.0.3 =
 * Added links to user's ads and user profile on the top user table
@@ -73,6 +76,6 @@ Has the same functions as Basic version plus:
 * Show you useful <strong>statistics</strong> that you can not see from main Classipress, Clipper or Jobroller installation
 * A graph about daily hits on posts also with number of daily shown posts
 * A graph showing you posts from users grouped by status of the post
-* A graph showing you user data like registered users by time, number of ads by users and also a table of top users
+* A graph showing you user data like registered users by time, number of ads by users, number of dead users and also a table of top users
 
 To purchase a <strong>PRO version</strong> please visit plugins <a href="http://www.easycpmods.com/plugin-faster-with-stats">website</a>.

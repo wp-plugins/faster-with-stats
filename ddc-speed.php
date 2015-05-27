@@ -10,14 +10,12 @@
   </div>    
   
 <?php
-  $time_diff = get_option('ecpm_ddc_max_time') - get_option('ecpm_ddc_min_time');
-  $final = get_time_gained();
+  
+  $time_gained = get_time_gained();
 ?>
 <hr>  
-  <h3><?php echo sprintf( __( 'Maximum time for getting daily counts: %s', ECPM_DDC ), '<font size=+1>'.round(get_option('ecpm_ddc_max_time'), 4).'</font>' );?></h3>
-  <h3><?php echo sprintf( __( 'Minimum time for getting daily counts: %s', ECPM_DDC ), '<font size=+1>'.round(get_option('ecpm_ddc_min_time'), 4).'</font>' );?></h3>
-  <h3><?php echo sprintf( __( 'Time gained for every visitor (in seconds): %s', ECPM_DDC ), '<font size=+2>'.round($time_diff, 4).'</font>' );?></h3>
-  <h3><?php echo sprintf( __( 'Average time gained in one day (%s hits): %s', ECPM_DDC ), get_option('ecpm_ddc_avg_hits'), '<font size=+2>'.$final.'</font>' );?></h3>
+  <h3><?php echo sprintf( __( 'Average time gained for every visitor (in seconds): %s', ECPM_DDC ), '<font size=+2>'.round($time_gained[0], 4).'</font>' );?></h3>
+  <h3><?php echo sprintf( __( 'Average time gained in one day (%s hits): %s', ECPM_DDC ), get_option('ecpm_ddc_avg_hits'), '<font size=+2>'.$time_gained[1].'</font>' );?></h3>
   <hr>
 <?php
   show_move_form();

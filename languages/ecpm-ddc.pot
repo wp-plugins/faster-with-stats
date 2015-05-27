@@ -2,13 +2,13 @@
 # This file is distributed under the same license as the EasyCPMods Faster with Stats.
 msgid ""
 msgstr ""
-"Project-Id-Version: EasyCPMods Faster with Stats 1.0.0\n"
+"Project-Id-Version: EasyCPMods Faster with Stats 1.0.4\n"
 "Report-Msgid-Bugs-To: http://www.easycpmods.com\n"
 "POT-Creation-Date: 2015-05-14 10:14:01+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2015-05-15 11:11+0100\n"
+"PO-Revision-Date: 2015-05-27 09:44+0100\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language: en\n"
 "X-Generator: Poedit 1.7.5\n"
@@ -103,12 +103,16 @@ msgstr ""
 msgid "No. of Jobs"
 msgstr ""
 
-#: ddc-pro.php:385
+#: ddc-pro.php:421
 msgid "Maximum no. of posts per user"
 msgstr ""
 
-#: ddc-pro.php:390
+#: ddc-pro.php:426
 msgid "No. of registered users"
+msgstr ""
+
+#: ddc-pro.php:433
+msgid "Users without posts"
 msgstr ""
 
 #: ddc-pro.php:471
@@ -139,16 +143,8 @@ msgstr ""
 msgid "Hits on posts"
 msgstr ""
 
-#: ddc-speed.php:19
-msgid "Maximum time for getting daily counts: %s"
-msgstr ""
-
-#: ddc-speed.php:20
-msgid "Minimum time for getting daily counts: %s"
-msgstr ""
-
 #: ddc-speed.php:21
-msgid "Time gained for every visitor (in seconds): %s"
+msgid "Average gained for every visitor (in seconds): %s"
 msgstr ""
 
 #: ddc-speed.php:22
