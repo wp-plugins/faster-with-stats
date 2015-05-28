@@ -4,7 +4,7 @@ Donate link: http://www.easycpmods.com
 Tags: speed, load, faster, stats, jobroller, clipper, classipress, slow, lightweight
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,11 @@ Waiting for first question.
 5. Options dialog
 
 == Changelog ==
+
+= 1.0.5 =
+* Fixed statistics about speed
+* Data removal is moved to uninstall stage
+* Minor GUI changes
 
 = 1.0.4 =
 * Added new statistic about dead users (users without posts)

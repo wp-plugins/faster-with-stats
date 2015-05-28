@@ -4,7 +4,7 @@ Plugin Name: Faster with Stats
 Plugin URI: http://www.easycpmods.com
 Description: Faster with Stats is a lightweight plugin that will speed up your AppThemes installation by moving daily statistics data to a plugin table. Why? Because a large table with daily counters will make your site very slow. It works with <strong>Classipress, Jobroller</strong> and <strong>Clipper</strong>.
 Author: Easy CP Mods
-Version: 1.0.4
+Version: 1.0.5
 Author URI: http://www.easycpmods.com
 */
 
@@ -14,10 +14,10 @@ define('DDC_DB_VER', '1.0.4');
 
 register_activation_hook( __FILE__, 'ecpm_ddc_activate');
 register_deactivation_hook( __FILE__, 'ecpm_ddc_deactivate');
+register_uninstall_hook( __FILE__, 'ecpm_ddc_uninstall');
 
 add_action('plugins_loaded', 'ecpm_ddc_plugins_loaded');
 add_action('admin_init', 'ecpm_ddc_requires_version');
-  
 add_action('admin_menu', 'ecpm_ddc_create_menu_set');
   
 function ddc_is_pro(){
@@ -61,14 +61,17 @@ function ecpm_ddc_activate() {
     update_option( 'ecpm_ddc_freq', 'manual' );
     update_option( 'ecpm_ddc_installed', 'yes' );
     update_option( 'ecpm_ddc_remove_data', '' );
-    update_option( 'ecpm_ddc_move_back_data', '' );            
+    update_option( 'ecpm_ddc_move_back_data', '' );
+    update_option( 'ecpm_ddc_db_ver', DDC_DB_VER );            
   }
 }
 
 function ecpm_ddc_deactivate() {                                   
   update_option( 'ecpm_ddc_freq', 'manual' );
   wp_clear_scheduled_hook('ecpm_faster_with_stats');
-  
+}
+
+function ecpm_ddc_uninstall() {
   $ecpm_ddc_move_back_data = get_option('ecpm_ddc_move_back_data');
   $ecpm_ddc_remove_data = get_option('ecpm_ddc_remove_data');
   
@@ -92,7 +95,7 @@ function ecpm_ddc_deactivate() {
      $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."ecpm_ddc");
      $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."ecpm_ddc_speed");
      $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."ecpm_ddc_dead_users");
-  }  
+  }
 }
 
 function ecpm_ddc_plugins_loaded() {
@@ -106,16 +109,20 @@ function ecpm_ddc_enqueuescripts()	{
 }
 
 
-function ecpm_get_data( $action = 'count' ) {
+function ecpm_get_data( $action = 'count_ddc' ) {
   global $wpdb;
     switch ( $action ) {
-      case 'count':
-        $return_count = count_daily($wpdb);
+      case 'count_app':
+        $return_count = count_daily($wpdb, 'app');
+        break;
+
+      case 'count_ddc':
+        $return_count = count_daily($wpdb, 'ddc');
         break;
 
       case 'move':
         $ecpm_ddc_record_threshold = get_option('ecpm_ddc_record_threshold');
-        $count = count_daily($wpdb);
+        //$count = count_daily($wpdb);
    
         //if ( $count >= $ecpm_ddc_record_threshold  && $count > 0 ) {
           $return_count = move_daily($wpdb);
@@ -192,9 +199,16 @@ function time_daily_table($wpdb) {
   
 }
 
-function count_daily($wpdb) {
-  $app_daily_table = get_app_daily_table($wpdb);
-  
+function count_daily($wpdb, $mytable = 'app') {
+  switch ($mytable){
+    case 'ddc':
+      $app_daily_table = $wpdb->prefix."ecpm_ddc";
+      break;
+    case 'app':
+      $app_daily_table = get_app_daily_table($wpdb);
+      break;
+  }
+    
   $result = $wpdb->get_var( "SELECT COUNT(*) FROM $app_daily_table" );
   return $result;
 }
@@ -233,7 +247,10 @@ function get_time_gained(){
   $sql = "SELECT AVG(TIME_TO_SEC(time_gained)) FROM ".$wpdb->prefix."ecpm_ddc_speed WHERE day > DATE_ADD(CURDATE(), INTERVAL -90 DAY)";
 	$avg_time_diff = $wpdb->get_var( $sql );
   
-  $ecpm_ddc_avg_time_user = $avg_time_diff / $ecpm_ddc_avg_hits;
+  if ( $ecpm_ddc_avg_hits > 0 )
+    $ecpm_ddc_avg_time_user = $avg_time_diff / $ecpm_ddc_avg_hits;
+  else  
+    $ecpm_ddc_avg_time_user = 0;
 
   $return_time[0] = $ecpm_ddc_avg_time_user;
   $return_time[1] = strftime('%T', mktime(0, 0, intval($avg_time_diff)));
@@ -429,9 +446,23 @@ function ecpm_ddc_settings_page_callback() {
 }
   
 function show_move_form() {
+  $count_ddc = ecpm_get_data('count_ddc');
+  $count_app = ecpm_get_data('count_app');
+  $app_class = $ddc_class = 'ddc_neutral';
+  if ( $count_ddc > $count_app)
+    $ddc_class = 'ddc_green';
+  
+  if ( $count_app >= 2000 )
+    $app_class = 'ddc_red';
+  elseif ($count_app <= 500)
+    $app_class = 'ddc_green';
+  elseif ($count_app < 2000)
+    $app_class = 'ddc_orange';  
+        
 ?>
 <form id='ddcmoveform' method="post" action="">
-    <h3><?php echo sprintf( __( 'Records currently in the table: %s', ECPM_DDC ), '<font size=+2>'.ecpm_get_data('count').'</font>' );?></h3>
+    <h3><?php echo sprintf( __( "Records in plugin's table: %s", ECPM_DDC ), "<font class=".$ddc_class.">".number_format_i18n( $count_ddc, 0)."</font>" );?></h3>
+    <h3><?php echo sprintf( __( "Records in theme's table: %s", ECPM_DDC ), "<font class=".$app_class.">".number_format_i18n( $count_app, 0)."</font>" );?></h3>
     <input type="submit" id="ecpm_ddc_submit_move" name="ecpm_ddc_submit_move" class="button-primary" value="<?php _e('Optimize table now', ECPM_DDC); ?>" />
   </form>
 <?php  

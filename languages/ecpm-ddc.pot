@@ -2,13 +2,13 @@
 # This file is distributed under the same license as the EasyCPMods Faster with Stats.
 msgid ""
 msgstr ""
-"Project-Id-Version: EasyCPMods Faster with Stats 1.0.4\n"
+"Project-Id-Version: EasyCPMods Faster with Stats 1.0.5\n"
 "Report-Msgid-Bugs-To: http://www.easycpmods.com\n"
 "POT-Creation-Date: 2015-05-14 10:14:01+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2015-05-27 09:44+0100\n"
+"PO-Revision-Date: 2015-05-28 09:42+0100\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language: en\n"
 "X-Generator: Poedit 1.7.5\n"
@@ -59,15 +59,15 @@ msgstr ""
 msgid "Auto"
 msgstr ""
 
-#: ddc-options.php:20
-msgid "Plugin deactivation"
+#: ddc-options.php:29
+msgid "Plugin uninstall"
 msgstr ""
 
-#: ddc-options.php:23
+#: ddc-options.php:32
 msgid "Put data back"
 msgstr ""
 
-#: ddc-options.php:25
+#: ddc-options.php:34
 msgid "Remove all plugin settings and tables"
 msgstr ""
 
@@ -151,14 +151,14 @@ msgstr ""
 msgid "Average time gained in one day (%s hits): %s"
 msgstr ""
 
-#: ddc-speed.php:59
-msgid "Time gained"
-msgstr "Pridobljen čas"
-
-#: ddc-speed.php:25
-msgid "Records currently in the table: %s"
+#: ecpm-ddc.php:460
+msgid "Records in plugin's table: %s"
 msgstr ""
 
-#: ecpm-ddc.php:395
+#: ecpm-ddc.php:461
+msgid "Records in theme's table: %s"
+msgstr ""
+
+#: ecpm-ddc.php:466
 msgid "Optimize table now"
 msgstr ""

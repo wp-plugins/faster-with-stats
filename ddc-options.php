@@ -26,7 +26,7 @@
   } 
   ?></h3>
   <hr>
-  <p><strong><?php echo _e('Plugin deactivation', ECPM_DDC ); ?></strong></p>
+  <p><strong><?php echo _e('Plugin uninstall', ECPM_DDC ); ?></strong></p>
   <p>
   <Input type='checkbox' Name='ecpm_ddc_move_back_data' <?php echo ($ecpm_ddc_move_back_data == 'on' ? 'checked':'') ;?> >
   <?php echo _e('Put data back', ECPM_DDC); ?><br>
