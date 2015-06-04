@@ -14,9 +14,11 @@
   $time_gained = get_time_gained();
 ?>
 <hr>  
+  <center>
   <h3><?php echo sprintf( __( 'Average time gained for every visitor (in seconds): %s', ECPM_DDC ), '<font size=+2>'.round($time_gained[0], 4).'</font>' );?></h3>
   <h3><?php echo sprintf( __( 'Average time gained in one day (%s hits): %s', ECPM_DDC ), get_option('ecpm_ddc_avg_hits'), '<font size=+2>'.$time_gained[1].'</font>' );?></h3>
-  <hr>
+  </center>
+  
 <?php
   show_move_form();
 
@@ -27,7 +29,11 @@ function ecpm_show_speed() {
   
 	$sql = "SELECT time_gained as total, day as time FROM ".$wpdb->prefix."ecpm_ddc_speed WHERE day > %s GROUP BY DATE(day) DESC";
 	$results = $wpdb->get_results( $wpdb->prepare( $sql, $time_from ) );
-	$speed = prepare_array_time($results);
+	$speed_daily = prepare_array_time($results);
+  
+  $sql = "SELECT time_gained as total, day as time FROM ".$wpdb->prefix."ecpm_ddc_speed_total WHERE day > %s GROUP BY DATE(day) DESC";
+	$results = $wpdb->get_results( $wpdb->prepare( $sql, $time_from ) );
+	$speed_total = prepare_array_time($results);
 //echo print_r($speed);  
 
 ?>
@@ -38,9 +44,20 @@ function ecpm_show_speed() {
 // <![CDATA[
 jQuery(function() {
 
-	var speed = [
+	var speeddaily = [
 		<?php
-		foreach ( $speed as $day => $value ) {
+		foreach ( $speed_daily as $day => $value ) {
+			$sdate = strtotime( $day );
+			$sdate = $sdate * 1000; // js timestamps measure milliseconds vs seconds
+			$newoutput = "[$sdate, $value],\n";
+			echo $newoutput;
+		}
+		?>
+	];
+  
+  var speedtotal = [
+		<?php
+		foreach ( $speed_total as $day => $value ) {
 			$sdate = strtotime( $day );
 			$sdate = $sdate * 1000; // js timestamps measure milliseconds vs seconds
 			$newoutput = "[$sdate, $value],\n";
@@ -53,9 +70,15 @@ jQuery(function() {
 
 	var output = [
 		{
-			data: speed,
-			label: "<?php _e( 'Time gained', ECPM_DDC ); ?>",
+			data: speeddaily,
+			label: "<?php _e( 'Time gained with daily table', ECPM_DDC ); ?>",
 			symbol: ''
+		},
+    {
+			data: speedtotal,
+			label: "<?php _e( 'Time gained with total table', ECPM_DDC ); ?>",
+			symbol: '',
+      yaxis: 2
 		} 
 	];
 
@@ -76,7 +99,9 @@ jQuery(function() {
 			timeformat: "%m/%d"
 		},
 		yaxis: {
-      
+      min: 0
+		},
+ 		y2axis: {
       min: 0
 		},
 		legend: {

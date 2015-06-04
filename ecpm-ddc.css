@@ -22,6 +22,10 @@
   font-weight:bold;
 }
 
+#counters_table td {
+   border: 1px solid lightgrey;
+} 
+
 #ecpm_top_users {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     width: 640px;

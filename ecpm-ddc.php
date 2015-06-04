@@ -4,13 +4,13 @@ Plugin Name: Faster with Stats
 Plugin URI: http://www.easycpmods.com
 Description: Faster with Stats is a lightweight plugin that will speed up your AppThemes installation by moving daily statistics data to a plugin table. Why? Because a large table with daily counters will make your site very slow. It works with <strong>Classipress, Jobroller</strong> and <strong>Clipper</strong>.
 Author: Easy CP Mods
-Version: 1.0.5
+Version: 1.1.0
 Author URI: http://www.easycpmods.com
 */
 
 define('ECPM_DDC', 'ecpm-ddc');
 define('DDC_NAME', '/faster-with-stats');
-define('DDC_DB_VER', '1.0.4');
+define('DDC_DB_VER', '1.2');
 
 register_activation_hook( __FILE__, 'ecpm_ddc_activate');
 register_deactivation_hook( __FILE__, 'ecpm_ddc_deactivate');
@@ -88,12 +88,16 @@ function ecpm_ddc_uninstall() {
      delete_option( 'ecpm_ddc_move_back_data' );
      delete_option( 'ecpm_ddc_max_time' );
      delete_option( 'ecpm_ddc_min_time' );
+     delete_option( 'ecpm_ddc_max_time_tot' );
+     delete_option( 'ecpm_ddc_min_time_tot' );
      delete_option( 'ecpm_ddc_avg_hits' );
      delete_option( 'ecpm_ddc_db_ver' );
      
      global $table_prefix, $wpdb;
      $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."ecpm_ddc");
+     $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."ecpm_ddc_total");
      $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."ecpm_ddc_speed");
+     $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."ecpm_ddc_speed_total");
      $wpdb->query("DROP TABLE IF EXISTS ".$wpdb->prefix."ecpm_ddc_dead_users");
   }
 }
@@ -109,44 +113,57 @@ function ecpm_ddc_enqueuescripts()	{
 }
 
 
-function ecpm_get_data( $action = 'count_ddc' ) {
+function ecpm_get_data( $action = 'count_ddc', $table_type = 'daily' ) {
   global $wpdb;
     switch ( $action ) {
       case 'count_app':
-        $return_count = count_daily($wpdb, 'app');
+        if ( $table_type == 'daily' )
+          $return_count = count_daily($wpdb, 'app');
+        else
+          $return_count = count_total($wpdb, 'app');  
         break;
 
       case 'count_ddc':
-        $return_count = count_daily($wpdb, 'ddc');
+        if ( $table_type == 'daily' )
+          $return_count = count_daily($wpdb, 'ddc');
+        else  
+          $return_count = count_total($wpdb, 'ddc');
         break;
 
       case 'move':
-        $ecpm_ddc_record_threshold = get_option('ecpm_ddc_record_threshold');
-        //$count = count_daily($wpdb);
-   
-        //if ( $count >= $ecpm_ddc_record_threshold  && $count > 0 ) {
+        if ( $table_type == 'daily' )
           $return_count = move_daily($wpdb);
-        //} else
-        //  $return_count = 0;
+        else  
+          $return_count = move_total($wpdb);
         break;
       
       case 'moveback':
-        $return_count = move_data_back($wpdb);
+        move_data_back($wpdb);
+        $return_count = 0;
         break;  
     }
     return $return_count;
 }
 
-function get_app_daily_table($wpdb){
+function get_app_table($wpdb, $table_type = 'daily'){
   switch (APP_TD) {
     case 'classipress':
-      return $wpdb->cp_ad_pop_daily;
+      if ( $table_type == 'daily' )
+        return $wpdb->cp_ad_pop_daily;
+      else  
+        return $wpdb->cp_ad_pop_total;
       break;
     case 'clipper':
-      return $wpdb->clpr_pop_daily;
+      if ( $table_type == 'daily' )
+        return $wpdb->clpr_pop_daily;
+      else
+        return $wpdb->clpr_pop_total;
       break;
     case 'jobroller':
-      return $wpdb->app_pop_daily;
+      if ( $table_type == 'daily' )
+        return $wpdb->app_pop_daily;
+      else
+        return $wpdb->app_pop_total;  
       break;
     default:
       return false;
@@ -154,7 +171,7 @@ function get_app_daily_table($wpdb){
 }
 
 function time_daily_table($wpdb) {
-  $app_daily_table = get_app_daily_table($wpdb);
+  $app_daily_table = get_app_table($wpdb, 'daily');
 
   $ecpm_ddc_max_time = get_option('ecpm_ddc_max_time');
   $ecpm_ddc_min_time = get_option('ecpm_ddc_min_time');
@@ -199,13 +216,53 @@ function time_daily_table($wpdb) {
   
 }
 
+function time_total_table($wpdb) {
+  $app_total_table = get_app_table($wpdb, 'total');
+
+  $ecpm_ddc_max_time = get_option('ecpm_ddc_max_time_tot');
+  $ecpm_ddc_min_time = get_option('ecpm_ddc_min_time_tot');
+  
+  $ad_ids = $wpdb->get_results( "SELECT ID FROM $wpdb->posts p WHERE p.post_type = '".APP_POST_TYPE."' and p.post_status = 'publish' ORDER BY RAND() LIMIT 30;" );
+  $today_date = date( 'Y-m-d', current_time( 'timestamp' ) );
+
+// time max value
+  $start_time = microtime(true);
+  
+  foreach ( $ad_ids as $ad_id ) {
+    $result = $wpdb->get_var( "SELECT postcount FROM ".$wpdb->prefix."ecpm_ddc_total WHERE postnum = $ad_id->ID" );
+  } 
+  $stop_time = microtime(true);
+  if ( $stop_time > $start_time ) {
+    $exec_max_time = $stop_time - $start_time;
+    //if ($exec_max_time > $ecpm_ddc_max_time) 
+      update_option( 'ecpm_ddc_max_time_tot', $exec_max_time );
+  }
+  
+// time min value
+  $start_time = microtime(true);
+  
+  foreach ( $ad_ids as $ad_id ) {
+    $result = $wpdb->get_var( "SELECT postcount FROM $app_total_table WHERE postnum = $ad_id->ID" );
+  } 
+  $stop_time = microtime(true);
+  
+  if ( $stop_time > $start_time ) {
+    $exec_min_time = $stop_time - $start_time;
+    if ( $exec_min_time > $exec_max_time ) 
+      $exec_min_time = 0;
+  
+    //if ($exec_min_time < $ecpm_ddc_min_time || !$ecpm_ddc_min_time || $ecpm_ddc_min_time <= 0 )
+      update_option( 'ecpm_ddc_min_time_tot', $exec_min_time );
+  }
+}
+
 function count_daily($wpdb, $mytable = 'app') {
   switch ($mytable){
     case 'ddc':
       $app_daily_table = $wpdb->prefix."ecpm_ddc";
       break;
     case 'app':
-      $app_daily_table = get_app_daily_table($wpdb);
+      $app_daily_table = get_app_table($wpdb, 'daily');
       break;
   }
     
@@ -213,8 +270,23 @@ function count_daily($wpdb, $mytable = 'app') {
   return $result;
 }
 
+function count_total($wpdb, $mytable = 'app') {
+  switch ($mytable){
+    case 'ddc':
+      $app_total_table = $wpdb->prefix."ecpm_ddc_total";
+      $result = $wpdb->get_var( "SELECT COUNT(*) FROM $app_total_table" );
+      break;
+    case 'app':
+      $app_total_table = get_app_table($wpdb, 'total');
+      $result = $wpdb->get_var( "SELECT COUNT(*) FROM $app_total_table WHERE postnum NOT IN(SELECT ID FROM $wpdb->posts)" );
+      break;
+  }
+  
+  return $result;
+}
+
 function move_daily($wpdb) {
-  $app_daily_table = get_app_daily_table($wpdb);
+  $app_daily_table = get_app_table($wpdb, 'daily');
   $ecpm_ddc_leave_days = get_option('ecpm_ddc_leave_days');
   
   // copy data to plugin table for statistics
@@ -239,45 +311,82 @@ function move_daily($wpdb) {
   return $result;
 }
 
+function move_total($wpdb) {
+  $app_total_table = get_app_table($wpdb, 'total');
+  
+  // copy data to plugin table for statistics
+  $wpdb->query("INSERT INTO ".$wpdb->prefix."ecpm_ddc_total SELECT * FROM $app_total_table att WHERE att.postnum NOT IN(SELECT ID FROM $wpdb->posts)");
+  
+  // delete data from original table
+  $result = $wpdb->query("DELETE FROM $app_total_table WHERE postnum NOT IN(SELECT ID FROM $wpdb->posts)");
+  
+  time_total_table($wpdb);
+  
+  // Save time gained
+  $total_time_diff = ( get_option('ecpm_ddc_max_time_tot') - get_option('ecpm_ddc_min_time_tot') ) * get_option('ecpm_ddc_avg_hits');
+  $total_time_diff = strftime('%T', mktime(0, 0, intval($total_time_diff)));
+  $wpdb->query("INSERT IGNORE INTO ".$wpdb->prefix."ecpm_ddc_speed_total (day, time_gained) VALUES(CURDATE(), '$total_time_diff')");
+  
+  return $result;
+}
+
 function get_time_gained(){
   global $wpdb;
   
 	$ecpm_ddc_avg_hits = get_option('ecpm_ddc_avg_hits');
   
   $sql = "SELECT AVG(TIME_TO_SEC(time_gained)) FROM ".$wpdb->prefix."ecpm_ddc_speed WHERE day > DATE_ADD(CURDATE(), INTERVAL -90 DAY)";
+      
 	$avg_time_diff = $wpdb->get_var( $sql );
+  
+  $sql = "SELECT AVG(TIME_TO_SEC(time_gained)) FROM ".$wpdb->prefix."ecpm_ddc_speed_total WHERE day > DATE_ADD(CURDATE(), INTERVAL -90 DAY)";
+  
+  $avg_time_diff_tot = $wpdb->get_var( $sql );
+  
+  $avg_time_diff += $avg_time_diff_tot;
   
   if ( $ecpm_ddc_avg_hits > 0 )
     $ecpm_ddc_avg_time_user = $avg_time_diff / $ecpm_ddc_avg_hits;
   else  
     $ecpm_ddc_avg_time_user = 0;
-
+  
   $return_time[0] = $ecpm_ddc_avg_time_user;
   $return_time[1] = strftime('%T', mktime(0, 0, intval($avg_time_diff)));
   return $return_time;
 }
 
 function move_data_back($wpdb) {
-  $app_daily_table = get_app_daily_table($wpdb);
+  $app_daily_table = get_app_table($wpdb, $table_type);
+  
   // copy data to original table
   $wpdb->query("INSERT INTO $app_daily_table SELECT * FROM ".$wpdb->prefix."ecpm_ddc");
+  $wpdb->query("INSERT INTO $app_total_table SELECT * FROM ".$wpdb->prefix."ecpm_ddc_total");
   
   // delete data from ecpm table
   $result = $wpdb->query("DELETE FROM ".$wpdb->prefix."ecpm_ddc");
-  
-  return $result;
+  $result = $wpdb->query("DELETE FROM ".$wpdb->prefix."ecpm_ddc_total");
 }
 
 function ddc_table_create () {
   global $wpdb;
-
-  $table_name = $wpdb->prefix . "ecpm_ddc";
+  
   $charset_collate = $wpdb->get_charset_collate();
   require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
+  $table_name = $wpdb->prefix . "ecpm_ddc";
   $sql = "CREATE TABLE IF NOT EXISTS $table_name (
           id mediumint(9) NOT NULL,
           time date NOT NULL DEFAULT '0000-00-00',
+          postnum int(11) NOT NULL,
+          postcount int(11) NOT NULL DEFAULT '0',
+          PRIMARY KEY (id)
+        ) $charset_collate;";
+  
+  dbDelta( $sql );
+//
+  $table_name = $wpdb->prefix . "ecpm_ddc_total";
+  $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+          id mediumint(9) NOT NULL,
           postnum int(11) NOT NULL,
           postcount int(11) NOT NULL DEFAULT '0',
           PRIMARY KEY (id)
@@ -293,7 +402,16 @@ function ddc_table_create () {
         ) $charset_collate;";
   
   dbDelta( $sql );
+//
+  $table_name = $wpdb->prefix . "ecpm_ddc_speed_total";
+  $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+          day date NOT NULL DEFAULT '0000-00-00',
+          time_gained time NOT NULL DEFAULT '00:00:00',
+          UNIQUE KEY (day)
+        ) $charset_collate;";
   
+  dbDelta( $sql );
+
 // dead users
   $table_name = $wpdb->prefix . "ecpm_ddc_dead_users";
   $sql = "CREATE TABLE IF NOT EXISTS $table_name (
@@ -309,9 +427,8 @@ function ddc_table_create () {
 
 function ecpm_ddc_event() {
   if ( ddc_is_pro() ){
-    //$ecpm_connect 
-    ecpm_get_data('move');
-    //echo $ecpm_connect;
+    ecpm_get_data('move', 'daily');
+    ecpm_get_data('move', 'total');
   } else {
     ecpm_ddc_deactivate();
   }
@@ -415,9 +532,14 @@ function ecpm_ddc_settings_page_callback() {
     <?php  
 	}
   
-  if( isset($_POST['ecpm_ddc_submit_move']) ) { 
-    $moved = ecpm_get_data('move');
-  ?>
+  if( isset($_POST['ecpm_ddc_submit_move_daily']) )
+    $moved = ecpm_get_data('move', 'daily');
+  
+  if( isset($_POST['ecpm_ddc_submit_move_total']) ) 
+    $moved = ecpm_get_data('move', 'total');
+
+  if( isset($_POST['ecpm_ddc_submit_move_daily']) || isset($_POST['ecpm_ddc_submit_move_total']) ) {
+  ?>  
       <div id="message" class="updated">
           <p><strong><?php echo sprintf( __('Records moved: %s', ECPM_DDC ), $moved ) ?></strong></p>
       </div>
@@ -446,25 +568,50 @@ function ecpm_ddc_settings_page_callback() {
 }
   
 function show_move_form() {
-  $count_ddc = ecpm_get_data('count_ddc');
-  $count_app = ecpm_get_data('count_app');
-  $app_class = $ddc_class = 'ddc_neutral';
-  if ( $count_ddc > $count_app)
-    $ddc_class = 'ddc_green';
+  $count_ddc['daily'] = ecpm_get_data('count_ddc', 'daily');
+  $count_app['daily'] = ecpm_get_data('count_app', 'daily');
+  $app_class['daily'] = $ddc_class['daily'] = 'ddc_neutral';
+  if ( $count_ddc['daily'] > $count_app['daily'])
+    $ddc_class['daily'] = 'ddc_green';
   
-  if ( $count_app >= 2000 )
-    $app_class = 'ddc_red';
-  elseif ($count_app <= 500)
-    $app_class = 'ddc_green';
-  elseif ($count_app < 2000)
-    $app_class = 'ddc_orange';  
+  if ( $count_app['daily'] >= 2000 )
+    $app_class['daily'] = 'ddc_red';
+  elseif ($count_app['daily'] <= 500)
+    $app_class['daily'] = 'ddc_green';
+  elseif ($count_app['daily'] < 2000)
+    $app_class['daily'] = 'ddc_orange';
+//    
+  $count_ddc['total'] = ecpm_get_data('count_ddc', 'total');
+  $count_app['total'] = ecpm_get_data('count_app', 'total');
+  $app_class['total'] = $ddc_class['total'] = 'ddc_neutral';
+  
+  if ( $count_app['total'] >= 100 )
+    $app_class['total'] = 'ddc_red';
+  elseif ($count_app['total'] == 0)
+    $app_class['total'] = 'ddc_green';
+  elseif ($count_app['total'] < 100)
+    $app_class['total'] = 'ddc_orange';  
+      
         
 ?>
-<form id='ddcmoveform' method="post" action="">
-    <h3><?php echo sprintf( __( "Records in plugin's table: %s", ECPM_DDC ), "<font class=".$ddc_class.">".number_format_i18n( $count_ddc, 0)."</font>" );?></h3>
-    <h3><?php echo sprintf( __( "Records in theme's table: %s", ECPM_DDC ), "<font class=".$app_class.">".number_format_i18n( $count_app, 0)."</font>" );?></h3>
-    <input type="submit" id="ecpm_ddc_submit_move" name="ecpm_ddc_submit_move" class="button-primary" value="<?php _e('Optimize table now', ECPM_DDC); ?>" />
+<table width="100%" cellspacing="8" cellpadding="10" id="counters_table"><tr>
+<td width="50%" align="center">
+  <form id='ddcmoveform_daily' method="post" action="">
+    <h3><?php echo _e( 'Daily counters table', ECPM_DDC );?></h3>
+    <strong><?php echo sprintf( __( "Records in plugin's table: %s", ECPM_DDC ), "<font class=".$ddc_class['daily'].">".number_format_i18n( $count_ddc['daily'], 0)."</font>" );?></strong><br>
+    <strong><?php echo sprintf( __( "Records in theme's table: %s", ECPM_DDC ), "<font class=".$app_class['daily'].">".number_format_i18n( $count_app['daily'], 0)."</font>" );?></strong><br><br>
+    <input type="submit" id="ecpm_ddc_submit_move_daily" name="ecpm_ddc_submit_move_daily" class="button-primary" value="<?php _e('Optimize table now', ECPM_DDC); ?>" />
   </form>
+</td><td width="50%" align="center">  
+  <form id='ddcmoveform_total' method="post" action="">
+    <h3><?php echo _e( 'Total counters table', ECPM_DDC );?></h3>
+    <strong><?php echo sprintf( __( "Records in plugin's table: %s", ECPM_DDC ), "<font class=".$ddc_class['total'].">".number_format_i18n( $count_ddc['total'], 0)."</font>" );?></strong><br>
+    <strong><?php echo sprintf( __( "Dead records in theme's table: %s", ECPM_DDC ), "<font class=".$app_class['total'].">".number_format_i18n( $count_app['total'], 0)."</font>" );?></strong><br><br>
+    <input type="submit" id="ecpm_ddc_submit_move_total" name="ecpm_ddc_submit_move_total" class="button-primary" value="<?php _e('Optimize table now', ECPM_DDC); ?>" />
+  </form>
+</td>
+</tr></table>  
+
 <?php  
 }
 

@@ -2,13 +2,13 @@
 # This file is distributed under the same license as the EasyCPMods Faster with Stats.
 msgid ""
 msgstr ""
-"Project-Id-Version: EasyCPMods Faster with Stats 1.0.5\n"
+"Project-Id-Version: EasyCPMods Faster with Stats 1.2.0\n"
 "Report-Msgid-Bugs-To: http://www.easycpmods.com\n"
-"POT-Creation-Date: 2015-05-14 08:51:07+00:00\n"
+"POT-Creation-Date: 2015-06-04 08:51:07+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2015-05-28 09:42+0100\n"
+"PO-Revision-Date: 2015-06-04 14:14+0100\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language: sl_SI\n"
 "X-Generator: Poedit 1.7.5\n"
@@ -135,17 +135,25 @@ msgstr "Na čakanju"
 msgid "Draft"
 msgstr "Neobjavljeni"
 
-#: ddc-speed.php:3
-msgid "Time gained with this plugin"
-msgstr "Pridobljen čas s tem vtičnikom"
-
 #: ddc-hits.php:10
 msgid "Hits on posts"
 msgstr "Zadetki"
 
+#: ddc-speed.php:3
+msgid "Time gained with this plugin"
+msgstr "Pridobljen čas s tem vtičnikom"
+
+#: ddc-speed.php:74
+msgid "Time gained with daily table"
+msgstr "Prihranjen čas pri tabeli dnevnih števcev"
+
+#: ddc-speed.php:79
+msgid "Time gained with total table"
+msgstr "Prihranjen čas pri tabeli skupnih števcev"
+
 #: ddc-speed.php:21
 msgid "Average time gained for every visitor (in seconds): %s"
-msgstr "Povprečen prihranjen čas za vsakega obiskovalca: %s"
+msgstr "Povprečen prihranjen čas za vsakega obiskovalca (v sekundah): %s"
 
 #: ddc-speed.php:22
 msgid "Average time gained in one day (%s hits): %s"
@@ -158,6 +166,18 @@ msgstr "Zapisov v vtičnikovi tabeli: %s"
 #: ecpm-ddc.php:461
 msgid "Records in theme's table: %s"
 msgstr "Zapisov v tematski tabeli: %s"
+
+#: ecpm-ddc.php:461
+msgid "Dead records in theme's table: %s"
+msgstr "Mrtvih zapisov v tematski tabeli: %s"
+
+#: ecpm-ddc.php:600
+msgid "Daily counters table"
+msgstr "Tabela dnevnih števcev"
+
+#: ecpm-ddc.php:607
+msgid "Total counters table"
+msgstr "Tabela skupnih števcev"
 
 #: ecpm-ddc.php:466
 msgid "Optimize table now"
