@@ -4,7 +4,7 @@ Plugin Name: Faster with Stats
 Plugin URI: http://www.easycpmods.com
 Description: Faster with Stats is a lightweight plugin that will speed up your AppThemes installation by moving daily statistics data to a plugin table. Why? Because a large table with daily counters will make your site very slow. It works with <strong>Classipress, Jobroller</strong> and <strong>Clipper</strong>.
 Author: Easy CP Mods
-Version: 1.1.1
+Version: 1.1.2
 Author URI: http://www.easycpmods.com
 */
 
@@ -17,6 +17,7 @@ register_deactivation_hook( __FILE__, 'ecpm_ddc_deactivate');
 register_uninstall_hook( __FILE__, 'ecpm_ddc_uninstall');
 
 add_action('plugins_loaded', 'ecpm_ddc_plugins_loaded');
+add_action('admin_enqueue_scripts', 'ecpm_ddc_enqueuescripts');
 add_action('admin_init', 'ecpm_ddc_requires_version');
 add_action('admin_menu', 'ecpm_ddc_create_menu_set');
   
@@ -28,7 +29,6 @@ function ddc_is_pro(){
 }
 
 if ( ddc_is_pro() ) {
-  add_action('admin_enqueue_scripts', 'ecpm_ddc_enqueuescripts');
   require_once( WP_PLUGIN_DIR . DDC_NAME . '/ddc-pro.php' );
 } 
 
