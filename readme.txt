@@ -3,8 +3,8 @@ Contributors: easycpmods
 Donate link: http://www.easycpmods.com
 Tags: speed, load, faster, stats, jobroller, clipper, classipress, slow, lightweight
 Requires at least: 3.5
-Tested up to: 4.2.2
-Stable tag: 1.1.2
+Tested up to: 4.3
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,7 +24,7 @@ Default theme in Classipress uses 3 tabs on front page and on every tab there ar
 
 There is also a table that stores total counters for posts, and the records are not getting clared after a post is deleted. So, this plugin will also optimize that table.
 
-Classipress, Clipper or Jobroller child theme is required to be installed on your WordPress for this plugin to work.
+<a href="https://www.appthemes.com/?aid=26553" target="_blank">Appthemes</a> <a href="https://www.appthemes.com/themes/classipress/?aid=26553" target="_blank">Classipress</a>, <a href="https://www.appthemes.com/themes/clipper/?aid=26553" target="_blank">Clipper</a> or <a href="https://www.appthemes.com/themes/jobroller/?aid=26553" target="_blank">Jobroller</a> child theme is required to be installed on your WordPress for this plugin to work.
 
 == Installation ==
 
@@ -44,6 +44,9 @@ Waiting for first question.
 5. Options dialog
 
 == Changelog ==
+
+= 1.1.3 =
+* Small correction for WP 4.3
 
 = 1.1.2 =
 * Fixed a bug with css formating
